@@ -4,7 +4,7 @@
 
 from flask import Flask, request, redirect, url_for
 
-from newsdb import get_posts, add_post, top_three, popular_author, bug_percentile
+from newsdb import top_three, popular_author, bug_percentile
 
 app = Flask(__name__)
 
@@ -52,22 +52,22 @@ BUGS = '''\
 
 
 @app.route('/', methods=['GET'])
-
 def main():
-  '''Main page of the forum.'''
-  top3 = "".join(TOP3 % (title, num) for title, num in top_three())
-  pop =  "".join(MOST_POP % (name, total) for name, total in popular_author())
-  bugs =  "".join(BUGS % (date_by_day, bug_p) for date_by_day, bug_p in bug_percentile())
-  html = HTML_WRAP % (top3,pop,bugs)
-  return html
+    # Main page of the forum.
+    top3 = "".join(TOP3 % (title, num) for title, num in top_three())
+    pop = "".join(MOST_POP % (name, total) for name, total in popular_author())
+    bugs = "".join(BUGS % (date, bugs) for date, bugs in bug_percentile())
+    html = HTML_WRAP % (top3, pop, bugs)
+    return html
+
 
 @app.route('/', methods=['POST'])
 def post():
-  '''New post submission.'''
-  message = request.form['content']
-  add_post(message)
-  return redirect(url_for('main'))
+    # '''New post submission.'''
+    message = request.form['content']
+    add_post(message)
+    return redirect(url_for('main'))
 
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000)
